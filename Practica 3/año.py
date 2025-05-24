@@ -10,6 +10,5 @@ for i in range(0, 5):
         else:
             print("No se aceptan valores negativos >:(")
         break
-    
     except ValueError:
         print("Error: Se ingresó algo que no es un número entero.")
