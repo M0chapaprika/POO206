@@ -9,9 +9,15 @@ for i in range(1,5):
                 if numero1 % 2 == 0:
                     numero1 = numero1 / 2
                     print(numero1)
+                    
+                    if numero1 == 1:
+                        break
                 else:
                     numero1 = (numero1 * 3) + 1
                     print(numero1)
+                    
+                    if numero1 == 1:
+                        break
         else:
             print("Debes ingresar un numero mayor a 1")
     except ValueError:
