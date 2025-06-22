@@ -34,14 +34,14 @@ def home():
 def saludar(nombre):
     return 'Hola, '+nombre+'!!!'
 
-#Ruta try-catch
+#Ruta try-catchs
 @app.errorhandler(404)
 def paginaNoE(e):
     return 'Cuidado, Error de capa 8 !!!',404
 
 @app.errorhandler(405)
 def metodonoP(e):
-    return 'Revisa el método del enío de tu ruta (GET o POST !!!)',405
+    return 'Revisa el método del envío de tu ruta (GET o POST !!!)',405
 
 #Ruta doble
 @app.route('/usuario')
