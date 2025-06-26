@@ -7,7 +7,7 @@ app= Flask(__name__)
 #Definir las variables
 app.config['MYSQL_HOST']="localhost" #toma el 27001
 app.config['MYSQL_USER']="root" #Definir el usuario
-app.config['MYSQL_PASSWORD']="SoyBienM0cha1" #Definir la pw
+app.config['MYSQL_PASSWORD']="@SoyBienM0cha1" #Definir la pw
 app.config['MYSQL_DB']="DBflask"
 app.secret_key= 'mysecretkey'
 #app.config['MYSQL_PORT']="3306" //usar solo en cambio de puerto
@@ -20,20 +20,34 @@ mysql= MySQL(app)
 #Ruta simple / de inicio
 @app.route('/')
 def home():
-    
     try:
         cursor= mysql.connection.cursor()
-        cursor.execute('SELECT * FROM tb_albums')
+        cursor.execute('SELECT * FROM BD_Albums')
         consultaTodo= cursor.fetchall()
-        return render_template('formulario.html', errores={},albums=consultaTodo)
-        
+        return render_template('formulario.html', errores={}, albums= consultaTodo)
+    
     except Exception as e:
-        print('Error al consultar todo: ', + e)
-        return render_template('formulario.html', errores={},albums=[])
-        
+        print('Error al consultar todo: '+e)
+        return render_template('formulario.html', errores={}, albums= [])
+    
     finally:
         cursor.close()
 
+#Ruta de detalle
+@app.route('/detalle/<int:id>')
+def detalle(id):
+    try:
+        cursor= mysql.connection.cursor()
+        cursor.execute('SELECT * FROM BD_Albums WHERE id_Album=%s', (id,))
+        consultaId= cursor.fetchone()
+        return render_template('consulta.html', album= consultaId)
+    
+    except Exception as e:
+        print('Error al consultar por ID: '+e)
+        return redirect(url_for('home'))
+    
+    finally:
+        cursor.close()
 
 #Ruta de consulta
 @app.route('/consulta')
@@ -100,5 +114,5 @@ def guardar():
     
     return render_template('formulario.html', errores=errores)
 
-if __name__ == '_main_':
+if __name__ == '__main__':
     app.run(port=3000,debug=True)
