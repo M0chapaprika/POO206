@@ -48,6 +48,62 @@ def detalle(id):
     
     finally:
         cursor.close()
+        
+        
+# Ruta para jalar los datos 
+@app.route('/actualizar/<int:id>')
+def actualizar(id):
+    try:
+        cursor= mysql.connection.cursor()
+        cursor.execute('SELECT * FROM BD_Albums WHERE id_Album=%s', (id,))
+        consultaId= cursor.fetchone()
+        return render_template('actualizar.html', album= consultaId, errores={})
+    
+    except Exception as e:
+        print('Error al consultar por ID para actualizar: '+str(e))
+        return redirect(url_for('home'))
+    
+    finally:
+        cursor.close()
+
+# Ruta para actualizar
+@app.route('/actualizarAlbum', methods=['POST'])
+def actualizarAlbum():
+    errores={}
+    
+    Vid = request.form.get('txtId','').strip()
+    Vtitulo= request.form.get('txtTitulo','').strip()
+    Vartista= request.form.get('txtArtista','').strip()
+    Vanio= request.form.get('txtAnio','').strip()
+    
+    if not Vtitulo:
+        errores['txtTitulo']= 'Nombre del album obligatorio'
+    if not Vartista:
+        errores['txtArtista']= 'Nombre del artista obligatorio'
+    if not Vanio:
+        errores['txtAnio']= 'Año es obligatorio'
+    elif not Vanio.isdigit():
+        errores['txtAnio']= 'Ingresa un año válido'
+        
+    if not errores:
+        try:
+            cursor= mysql.connection.cursor()
+            cursor.execute('UPDATE BD_Albums SET album=%s, artista=%s, anio=%s WHERE id_Album=%s', 
+                          (Vtitulo, Vartista, Vanio, Vid))
+            mysql.connection.commit()
+            flash('Album actualizado en BD')
+            return redirect(url_for('home'))
+        
+        except Exception as e:
+            mysql.connection.rollback()
+            flash('Error al actualizar: '+ str(e))
+            return redirect(url_for('actualizar', id=Vid))
+            
+        finally:
+            cursor.close()
+    
+    album = (Vid, Vtitulo, Vartista, Vanio)
+    return render_template('actualizar.html', album=album, errores=errores)
 
 #Ruta de consulta
 @app.route('/consulta')
