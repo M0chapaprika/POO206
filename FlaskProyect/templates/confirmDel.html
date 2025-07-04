@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Confirmar Eliminación </title>
+</head>
+<body>
+    <h2 style="color: purple;"> ¿Seguro que eliminaras? </h2>
+    
+    <form action="/confirmarEliminar" method="post">
+        <input type="hidden" name="txtId" value="{{ album.0 }}">
+        
+        <input type="text" name="txtTitulo" placeholder="Titulo" value="{{ album.1 }}" disabled>
+        <input type="text" name="txtArtista" placeholder="Artista" value="{{ album.2 }}" disabled>
+        <input type="text" name="txtAnio" placeholder="Año de publicación" value="{{ album.3 }}" disabled>
+
+        <button type="submit"> Eliminar Album </button>
+
+        <br>
+        <br>
+        
+        <a href="/detalle/{{ album.0 }}"> Regresar al Formulario</a>
+    </form>
+</body>
+</html>
