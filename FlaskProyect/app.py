@@ -22,7 +22,7 @@ mysql= MySQL(app)
 def home():
     try:
         cursor= mysql.connection.cursor()
-        cursor.execute('SELECT * FROM BD_Albums')
+        cursor.execute('SELECT * FROM BD_Albums WHERE state = 1')
         consultaTodo= cursor.fetchall()
         return render_template('formulario.html', errores={}, albums= consultaTodo)
     
@@ -104,6 +104,44 @@ def actualizarAlbum():
     
     album = (Vid, Vtitulo, Vartista, Vanio)
     return render_template('actualizar.html', album=album, errores=errores)
+
+# Ruta redireccion a conf_eliminar
+@app.route('/eliminar/<int:id>')
+def eliminar(id):
+    try:
+        cursor= mysql.connection.cursor()
+        cursor.execute('SELECT * FROM BD_Albums WHERE id_Album=%s AND state = 1', (id,))
+        
+        consultaId= cursor.fetchone()
+        
+        if consultaId:
+            return render_template('confirmDel.html', album= consultaId)
+        
+        else:
+            flash('El álbum no existe o ya ha sido eliminado')
+            return redirect(url_for('home'))
+    
+    finally:
+        cursor.close()
+
+# Ruta para conf_eliminacion
+@app.route('/confirmarEliminar', methods=['POST'])
+def confirmarEliminar():
+    Vid = request.form.get('txtId','').strip()
+    try:
+        cursor= mysql.connection.cursor()
+        cursor.execute('UPDATE BD_Albums SET state=0 WHERE id_Album=%s', (Vid,))
+        mysql.connection.commit()
+        flash('Álbum eliminado correctamente')
+        return redirect(url_for('home'))
+    
+    except Exception as e:
+        mysql.connection.rollback()
+        flash('Error al eliminar el álbum: '+ str(e))
+        return redirect(url_for('home'))
+            
+    finally:
+        cursor.close()
 
 #Ruta de consulta
 @app.route('/consulta')
