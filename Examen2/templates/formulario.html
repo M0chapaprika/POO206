@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Formulario </title>
+</head>
+<body>
+    <h2> Vista del formulario </h2>
+    <a href="/Consulta"> Abrir vista Consulta </a> <!--Enlaces de vistas entre interfaces-->
+
+    <br>
+    <br> <!--Generar espacios -->
+    <br>
+
+        {% with mensajes = get_flashed_messages() %}
+            {% if mensajes%}
+                {% for msj in mensajes %}
+                    <h4 style="color: blue">{{ msj }}</h4>
+                {% endfor%}
+            {% endif%}
+        {% endwith%}
+
+    <form action="/Guardarpelicula" method="post">
+
+        <input type="text" name="txtTitulo" placeholder="Titulo" value="{{ request.form.txtTitulo}}"> <!--cajas de texto con nomnre y etiquetas -->
+        {% if errores and errores.txtTitulo %}
+            <p style="color: red;">{{errores.txtTitulo}}</p>
+        {% endif %}
+
+        <input type="text" name="txtDirector" placeholder="Director" value="{{ request.form.txtDirector}}">
+        {% if errores and errores.txtDirector %}
+            <p style="color: red;">{{errores.txtDirector}}</p>
+        {% endif %}
+
+        <input type="text" name="txtAnio" placeholder="Año de publicación" value="{{ request.form.txtAnio}}">
+        {% if errores and errores.txtAnio %}
+            <p style="color: red;">{{errores.txtAnio}}</p>
+        {% endif %}
+
+        <input type="text" name="txtGenero" placeholder="Genero" value="{{ request.form.txtGenero}}">
+        {% if errores and errores.txtGenero %}
+            <p style="color: red;">{{errores.txtGenero}}</p>
+        {% endif %}
+        <button type="submit"> Guardar Pelicula</button> <!--botón de tipo submit por el uso de "POST" -->
+    </form>
+    <br>
+    <table>
+        <thead>
+            <tr>
+                <td>Id:</td>
+                <td>Pelicula:</td>
+            </tr>
+        </thead>
+        <tbody>
+
+            {%for alb in albums%}
+            <tr>
+                <td>{{ alb.0 }}</td>
+                <td> <a href="/detalle/{{ alb.0 }}"> {{ alb.1 }} </a> </td>
+            </tr>
+            {%endfor%}
+
+        </tbody>
+    </table>
+</body>
+</html>
